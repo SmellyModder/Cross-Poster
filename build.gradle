@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
+    }
+}
+
+plugins {
+   id "com.github.johnrengelman.shadow" version "2.0.0"
+}
+
+apply plugin: 'java-library'
+apply plugin: 'application'
+
+mainClassName = 'crossposter/CrossPoster'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+   implementation 'net.dv8tion:JDA:4.2.0_181'
+   implementation 'club.minnced:discord-webhooks:0.3.2'
+   
+   implementation 'net.oneandone.reflections8:reflections8:0.11.5'
+   
+   implementation 'com.google.code.gson:gson:2.8.6'
+}
+
+shadowJar {
+	manifest {
+		attributes(
+			'Main-Class': 'crossposter.CrossPoster'
+		)
+	}
+}
