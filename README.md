@@ -1,3 +1,5 @@
+![Logo](https://cdn.discordapp.com/avatars/727309426549063732/158e4ff08e5ebf32b6d8468f82356712.png?size=128)
+
 # What is Cross-Poster?
 Cross-Poster Bot is a bot that can crosspost messages in text channels to other channels.
 The bot has some ways of configuring the crossposting and was originally designed to be used for showcase channels on discord servers.
