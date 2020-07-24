@@ -32,12 +32,12 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
  */
 @SuppressWarnings("unused")
 public final class CrossPoster {
-	private static final String KEY = "";
+	private static final String TOKEN = "";
 	private static JDA BOT;
 	
 	public static void main(String[] args) throws LoginException {
 		ServerDataHandler.initialize();
-		JDABuilder botBuilder = JDABuilder.create(KEY, GatewayIntent.getIntents(GatewayIntent.DEFAULT));
+		JDABuilder botBuilder = JDABuilder.create(TOKEN, GatewayIntent.getIntents(GatewayIntent.DEFAULT));
 		botBuilder.setStatus(OnlineStatus.ONLINE);
 		botBuilder.setActivity(Activity.of(ActivityType.DEFAULT, "Cross-posting Channels"));
 		botBuilder.addEventListeners(new EventHandler());
@@ -71,7 +71,7 @@ public final class CrossPoster {
 		
 		@Override
 		public void onGuildJoin(GuildJoinEvent event) {
-			updateBotNickname(event.getGuild());
+			updateBotNickname(event.getGuild(), null);
 		}
 		
 		@Override
@@ -112,20 +112,31 @@ public final class CrossPoster {
 			return data != null && data.prefix != null ? data.prefix : "cp!";
 		}
 		
-		public static void updateBotNickname(Guild guild) {
+		public static void updateBotNickname(Guild guild, @Nullable String oldPrefix) {
 			Member bot = guild.getMemberByTag("Cross-Poster", "5404");
 			String nickname = bot.getNickname();
-			if (nickname == null) {
-				nickname = "Cross-Poster" + " " + "[" + getServerPrefix(guild.getId()) + "]";
+			String prefix = getServerPrefix(guild.getId());
+			if (nickname == null || oldPrefix == null) {
+				nickname = "Cross-Poster" + " [" + prefix + "]";
 			} else {
 				StringBuilder builder = new StringBuilder();
 				String[] splitNickname = nickname.split(" ");
-				for (int i = 0; i < splitNickname.length; i++) {
-					String component = splitNickname[i];
-					if (component.charAt(0) == '[' && component.charAt(2) == ']') 
-						component = "[" + getServerPrefix(guild.getId()) + "]";
-					builder.append(" " + component);
+				int length = splitNickname.length;
+				int charAfterOldPrefix = oldPrefix.length() + 1;
+				boolean foundPrefix = false;
+				for (int i = 0; i < length; i++) {
+					String currentString = splitNickname[i];
+					if (i == length - 1 && currentString.length() == charAfterOldPrefix + 1 && currentString.charAt(0) == '[' && currentString.charAt(charAfterOldPrefix) == ']') {
+						splitNickname[i] = "[" + prefix + "]";
+						foundPrefix = true;
+					}
+					builder.append(" " + splitNickname[i]);
 				}
+				
+				if (!foundPrefix) {
+					builder.append(" " + "[" + prefix + "]");
+				}
+				
 				nickname = builder.toString();
 			}
 			guild.modifyNickname(bot, nickname).queue();

@@ -1,5 +1,6 @@
 package crossposter.commands;
 
+import crossposter.CrossPoster;
 import crossposter.ServerDataHandler;
 import crossposter.CrossPoster.EventHandler;
 import disparser.Command;
@@ -23,10 +24,12 @@ public class PrefixCommand extends Command {
 		Message message = event.getMessage();
 		TextChannel channel = event.getChannel();
 		if (this.testForAdmin(message)) {
-			String prefix = context.getParsedResult(0);
 			Guild guild = event.getGuild();
-			ServerDataHandler.writePrefix(guild.getId(), prefix);
-			EventHandler.updateBotNickname(guild);
+			String guildId = guild.getId();
+			String oldPrefix = CrossPoster.EventHandler.getServerPrefix(guildId);
+			String prefix = context.getParsedResult(0);
+			ServerDataHandler.writePrefix(guildId, prefix);
+			EventHandler.updateBotNickname(guild, oldPrefix);
 			this.sendMessage(channel, MessageUtil.createSuccessfulMessage("Set new command prefix to " + "`" + prefix + '`'));
 		}
 	}
