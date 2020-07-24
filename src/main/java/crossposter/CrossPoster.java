@@ -141,29 +141,5 @@ public final class CrossPoster {
 			}
 			guild.modifyNickname(bot, nickname).queue();
 		}
-		
-		/**
-		 * Gets the webhook for a guild for its channel
-		 * @return The webhook for the guild, can be null if an error occurs
-		 */
-		private Webhook getWebhookForGuild(TextChannel channel, ServerData serverData) {
-			try {
-				List<Webhook> webhooks = channel.getGuild().retrieveWebhooks().submit().get();
-				if (webhooks.isEmpty()) {
-					return channel.createWebhook("Cross-Poster").submit().get();
-				} else {
-					for (Webhook webhook : webhooks) {
-						if (webhook.getUrl().equals(ServerData.getOrCreateWebhookURL(channel, serverData))) {
-							return webhook;
-						}
-					}
-				}
-				return channel.createWebhook("Cross-Poster").submit().get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-		
 	}
 }

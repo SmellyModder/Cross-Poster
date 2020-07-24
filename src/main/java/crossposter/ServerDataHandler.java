@@ -154,6 +154,10 @@ public final class ServerDataHandler {
 			}
 			return channel.createWebhook("Cross-Poster").submit().get().getUrl();
 		}
+		
+		public static String getWebhookURL(ServerData serverData) {
+			return serverData.webhookURL;
+		}
 	}
 	
 	public static class ChannelData {

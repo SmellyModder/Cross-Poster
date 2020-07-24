@@ -94,7 +94,7 @@ public class ShowCommand extends Command {
 				return channel.createWebhook("Cross-Poster").submit().get();
 			} else {
 				for (Webhook webhook : webhooks) {
-					if (webhook.getUrl().equals(ServerData.getOrCreateWebhookURL(channel, serverData))) {
+					if (webhook.getUrl().equals(ServerData.getWebhookURL(serverData))) {
 						return webhook;
 					}
 				}
