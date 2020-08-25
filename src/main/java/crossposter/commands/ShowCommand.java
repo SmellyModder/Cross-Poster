@@ -113,6 +113,7 @@ public class ShowCommand extends Command {
 		for (String component : split) {
 			builder.append(" " + component);
 		}
+		builder.append(String.format(" (**Source:** [Jump](<%s>))", message.getJumpUrl()));
 		return builder.toString();
 	}
 
