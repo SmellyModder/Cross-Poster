@@ -26,7 +26,7 @@ public class ConfigureCrosspostCommand extends Command {
 		TextChannel channel = event.getChannel();
 		Message message = event.getMessage();
 		Guild guild = message.getGuild();
-		if (message.getMember() != null && this.testForAdmin(message)) {
+		if (message.getMember() != null) {
 			TextChannel crosspostChannel = context.getParsedResult(0);
 			long crosspostChannelId = crosspostChannel.getIdLong();
 			if (this.disable) {
@@ -44,7 +44,6 @@ public class ConfigureCrosspostCommand extends Command {
 				
 				if (noData) {
 					this.sendMessage(channel, MessageUtil.createErrorMessage("This channel doesn't crosspost to that channel"));
-					return;
 				} else {
 					ServerDataHandler.unwriteChannel(guild.getId(), foundChannel);
 					this.sendMessage(channel, MessageUtil.createSuccessfulMessage("This channel now no longer crossposts to " + crosspostChannel.getAsMention()));
@@ -68,7 +67,7 @@ public class ConfigureCrosspostCommand extends Command {
 				this.sendMessage(channel, MessageUtil.createSuccessfulMessage("This channel now crossposts images to " + crosspostChannel.getAsMention()));
 				ServerDataHandler.writeChannel(guild.getId(), new ChannelData(channel.getIdLong(), crosspostChannelId), channel);
 			}
-		};
+		}
 	}
 
 }

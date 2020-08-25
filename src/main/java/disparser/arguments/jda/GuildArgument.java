@@ -6,13 +6,22 @@ import disparser.ParsedArgument;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 
-public class GuildArgument implements Argument<Guild> {
+/**
+ * An argument that can parse guilds by their ID for a JDA.
+ * 
+ * @author Luke Tonon
+ */
+public final class GuildArgument implements Argument<Guild> {
 	private final JDA jda;
 	
 	private GuildArgument(JDA jda) {
 		this.jda = jda;
 	}
 	
+	/**
+	 * @param jda - The JDA to get the guild from.
+	 * @return An instance of this argument with a JDA.
+	 */
 	public static GuildArgument get(JDA jda) {
 		return new GuildArgument(jda);
 	}
@@ -25,10 +34,10 @@ public class GuildArgument implements Argument<Guild> {
 				if (guild != null) {
 					return ParsedArgument.parse(guild);
 				} else {
-					return ParsedArgument.parseWithError(null, "Guild with id " + "`" + arg + "`" + " could not be found");
+					return ParsedArgument.parseError("Guild with id `%s` could not be found");
 				}
 			} catch (NumberFormatException exception) {
-				return ParsedArgument.parseWithError(null, "`" + arg + "`" + " is not a valid guild id");
+				return ParsedArgument.parseError("`%s` is not a valid guild id", arg);
 			}
 		});
 	}

@@ -27,8 +27,8 @@ import net.dv8tion.jda.api.entities.Webhook;
  */
 public final class ServerDataHandler {
 	private static final Gson GSON = new Gson();
-	private static final String DIRECTORY = "/root/cross-poster/data";
-	private static final Map<String, ServerData> SERVER_DATA = Collections.synchronizedMap(new HashMap<String, ServerData>());
+	private static final String DIRECTORY = "C:\\Users\\diamo\\OneDrive\\Desktop\\Discord Bots\\Cross-Poster\\Cross-Poster\\data";
+	private static final Map<String, ServerData> SERVER_DATA = Collections.synchronizedMap(new HashMap<>());
 	
 	public static void initialize() {
 		File[] files = new File(DIRECTORY).listFiles();

@@ -4,10 +4,18 @@ import disparser.Argument;
 import disparser.ArgumentReader;
 import disparser.ParsedArgument;
 
-public class IntegerArgument implements Argument<Integer> {
+/**
+ * A simple argument for parsing integers.
+ * 
+ * @author Luke Tonon
+ */
+public final class IntegerArgument implements Argument<Integer> {
 
 	private IntegerArgument() {}
 	
+	/**
+	 * @return The default instance.
+	 */
 	public static IntegerArgument get() {
 		return new IntegerArgument();
 	}
@@ -15,7 +23,7 @@ public class IntegerArgument implements Argument<Integer> {
 	@Override
 	public ParsedArgument<Integer> parse(ArgumentReader reader) {
 		Integer integer = reader.nextInt();
-		return integer != null ? ParsedArgument.parse(integer) : ParsedArgument.parseWithError(integer, "`" + reader.getMessageComponents()[reader.getCurrentComponent()] + "`" + " is not a valid integer");
+		return integer != null ? ParsedArgument.parse(integer) : ParsedArgument.parseError("`%s` is not a valid integer", reader.getCurrentMessageComponent());
 	}
 
 }

@@ -1,14 +1,20 @@
 package disparser.arguments.jda;
 
-import javax.annotation.Nullable;
-
 import disparser.Argument;
 import disparser.ArgumentReader;
 import disparser.ParsedArgument;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
-public class VoiceChannelArgument implements Argument<VoiceChannel> {
+import javax.annotation.Nullable;
+
+/**
+ * An argument that can parse voice channels by their ID.
+ * Define a JDA to get the voice channel from or leave null to use the JDA of the message that was sent.
+ * 
+ * @author Luke Tonon
+ */
+public final class VoiceChannelArgument implements Argument<VoiceChannel> {
 	@Nullable
 	private final JDA jda;
 	
@@ -16,10 +22,18 @@ public class VoiceChannelArgument implements Argument<VoiceChannel> {
 		this.jda = jda;
 	}
 	
+	/**
+	 * @return A default instance.
+	 */
 	public static VoiceChannelArgument get() {
 		return new VoiceChannelArgument(null);
 	}
 	
+	/**
+	 * If you only want to get voice channels of the guild that the message was sent from then use {@link #get()}.
+	 * @param jda - JDA to get the channel from.
+	 * @return An instance of this argument with a JDA.
+	 */
 	public static VoiceChannelArgument create(JDA jda) {
 		return new VoiceChannelArgument(jda);
 	}
@@ -33,10 +47,10 @@ public class VoiceChannelArgument implements Argument<VoiceChannel> {
 				if (foundChannel != null) {
 					return ParsedArgument.parse(foundChannel);
 				} else {
-					return ParsedArgument.parseWithError(null, "Voice channel with id " + "`" + arg + "`" + " could not be found");
+					return ParsedArgument.parseError("Voice channel with id `%d` could not be found", parsedLong);
 				}
 			} catch (NumberFormatException exception) {
-				return ParsedArgument.parseWithError(null, "`" + arg + "`" + " is not a valid channel id");
+				return ParsedArgument.parseError("`%s` is not a valid channel id", arg);
 			}
 		});
 	}

@@ -1,9 +1,11 @@
 package crossposter.commands;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import club.minnced.discord.webhook.WebhookClientBuilder;
+import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import crossposter.ServerDataHandler;
 import crossposter.ServerDataHandler.ChannelData;
@@ -37,51 +39,48 @@ public class ShowCommand extends Command {
 			if (serverData != null) {
 				ChannelData channelData = ChannelData.getCrosspostChannel(serverData.channelData, channel.getIdLong());
 				if (channelData == null) return;
-				Long crosspostChannelId = channelData.crosspostChannelId;
-				if (crosspostChannelId != null) {
-					TextChannel crosspostChannel = guild.getTextChannelById(crosspostChannelId);
-					if (crosspostChannel != null) {
-						Webhook webhook = this.getWebhookForGuild(channel, serverData);
-						try {
-							webhook.getManager().setChannel(crosspostChannel).queue();
-						} catch (InsufficientPermissionException e) {
-							channel.sendMessage("Unable to crosspost message, the crossposter bot doesn't have permission to send messages to that channel");
-							return;
-						}
-						
-						ServerDataHandler.writeWebhook(guildId, webhook);
-						
-						WebhookClientBuilder builder = new WebhookClientBuilder(webhook.getUrl());
-						
-						builder.setThreadFactory((job) -> {
-						    Thread thread = new Thread(job);
-						    thread.setName("Cross-Poster");
-						    thread.setDaemon(true);
-						    return thread;
-						});
-						
-						builder.setWait(true);
-						
-						WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
-						Member messageSender = message.getMember();
-						String nickname = messageSender != null ? messageSender.getNickname() : null;
-						messageBuilder.setUsername(nickname != null ? nickname : message.getAuthor().getName());
-						messageBuilder.setAvatarUrl(message.getAuthor().getAvatarUrl());
-						messageBuilder.setContent(this.getMessageWithoutShowPrefix(message.getContentRaw()));
-						
-						List<Attachment> messageAttachments = message.getAttachments();
-						if (channelData.requiresAttachment && messageAttachments.isEmpty()) {
-							return;
-						}
-						
-						for (Attachment attachment : messageAttachments) {
-							try {
-								messageBuilder.addFile(attachment.downloadToFile().get());
-							} catch (InterruptedException | ExecutionException e) {}
-						}
-						
-						builder.build().send(messageBuilder.build());
+				long crosspostChannelId = channelData.crosspostChannelId;
+				TextChannel crosspostChannel = guild.getTextChannelById(crosspostChannelId);
+				if (crosspostChannel != null) {
+					Webhook webhook = this.getWebhookForGuild(channel, serverData);
+					try {
+						webhook.getManager().setChannel(crosspostChannel).queue();
+					} catch (InsufficientPermissionException e) {
+						return;
 					}
+						
+					ServerDataHandler.writeWebhook(guildId, webhook);
+						
+					WebhookClientBuilder builder = new WebhookClientBuilder(webhook.getUrl());
+						
+					builder.setThreadFactory((job) -> {
+						Thread thread = new Thread(job);
+						thread.setName("Cross-Poster");
+						thread.setDaemon(true);
+						return thread;
+					});
+						
+					builder.setWait(true);
+						
+					WebhookMessageBuilder messageBuilder = new WebhookMessageBuilder();
+					Member messageSender = message.getMember();
+					String nickname = messageSender != null ? messageSender.getNickname() : null;
+					messageBuilder.setUsername(nickname != null ? nickname : message.getAuthor().getName());
+					messageBuilder.setAvatarUrl(message.getAuthor().getAvatarUrl());
+					messageBuilder.setContent(this.getMessageWithoutShowPrefix(message));
+
+					List<Attachment> messageAttachments = message.getAttachments();
+					if (channelData.requiresAttachment && messageAttachments.isEmpty()) {
+						return;
+					}
+						
+					for (Attachment attachment : messageAttachments) {
+						try {
+							messageBuilder.addFile(attachment.downloadToFile().get());
+						} catch (InterruptedException | ExecutionException e) {}
+					}
+						
+					builder.build().send(messageBuilder.build());
 				}
 			}
 		}
@@ -106,11 +105,12 @@ public class ShowCommand extends Command {
 		}
 	}
 	
-	private String getMessageWithoutShowPrefix(String messageContent) {
+	private String getMessageWithoutShowPrefix(Message message) {
+		String messageContent = message.getContentRaw();
 		StringBuilder builder = new StringBuilder();
-		String[] message = messageContent.split(" ");
-		message[0] = "";
-		for (String component : message) {
+		String[] split = messageContent.split(" ");
+		split[0] = "";
+		for (String component : split) {
 			builder.append(" " + component);
 		}
 		return builder.toString();

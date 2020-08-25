@@ -1,10 +1,15 @@
 package disparser;
 
-import java.util.Collection;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
+import java.util.Collection;
+
+/**
+ * A class that holds some useful message functions, all of which are used in Disparser.
+ * 
+ * @author Luke Tonon
+ */
 public final class MessageUtil {
 	
 	public static MessageEmbed createErrorMessage(String errorMessage) {
@@ -43,7 +48,7 @@ public final class MessageUtil {
 		StringBuilder builder = new StringBuilder();
 		int size = collection.size();
 		for (int i = 0; i < size; i++) {
-			builder.append(collection.toArray()[i] + (i == size - 2 ? (size > 2 ? ", and " : " and ") : i == size - 1 ? "" : ", "));
+			builder.append(collection.toArray()[i]).append(i == size - 2 ? (size > 2 ? ", and " : " and ") : i == size - 1 ? "" : ", ");
 		}
 		return builder.toString();
 	}

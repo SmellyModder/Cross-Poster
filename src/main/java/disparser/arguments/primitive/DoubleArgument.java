@@ -4,10 +4,18 @@ import disparser.Argument;
 import disparser.ArgumentReader;
 import disparser.ParsedArgument;
 
-public class DoubleArgument implements Argument<Double> {
+/**
+ * A simple argument for parsing doubles.
+ * 
+ * @author Luke Tonon
+ */
+public final class DoubleArgument implements Argument<Double> {
 
 	private DoubleArgument() {}
 	
+	/**
+	 * @return The default instance.
+	 */
 	public static DoubleArgument get() {
 		return new DoubleArgument();
 	}
@@ -15,7 +23,7 @@ public class DoubleArgument implements Argument<Double> {
 	@Override
 	public ParsedArgument<Double> parse(ArgumentReader reader) {
 		Double nextDouble = reader.nextDouble();
-		return nextDouble != null ? ParsedArgument.parse(nextDouble) : ParsedArgument.parseWithError(nextDouble, "`" + reader.getMessageComponents()[reader.getCurrentComponent()] + "`" + " is not a valid double");
+		return nextDouble != null ? ParsedArgument.parse(nextDouble) : ParsedArgument.parseError("`%s` is not a valid double", reader.getCurrentMessageComponent());
 	}
 
 }

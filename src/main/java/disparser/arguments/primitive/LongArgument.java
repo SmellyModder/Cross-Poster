@@ -4,10 +4,18 @@ import disparser.Argument;
 import disparser.ArgumentReader;
 import disparser.ParsedArgument;
 
-public class LongArgument implements Argument<Long> {
+/**
+ * A simple argument for parsing longs.
+ * 
+ * @author Luke Tonon
+ */
+public final class LongArgument implements Argument<Long> {
 
 	private LongArgument() {}
 	
+	/**
+	 * @return The default instance.
+	 */
 	public static LongArgument get() {
 		return new LongArgument();
 	}
@@ -15,7 +23,7 @@ public class LongArgument implements Argument<Long> {
 	@Override
 	public ParsedArgument<Long> parse(ArgumentReader reader) {
 		Long nextLong = reader.nextLong();
-		return nextLong != null ? ParsedArgument.parse(nextLong) : ParsedArgument.parseWithError(nextLong, "`" + reader.getMessageComponents()[reader.getCurrentComponent()] + "`" + " is not a valid long");
+		return nextLong != null ? ParsedArgument.parse(nextLong) : ParsedArgument.parseError("`%s` is not a valid long", reader.getCurrentMessageComponent());
 	}
 
 }

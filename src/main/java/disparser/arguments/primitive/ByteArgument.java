@@ -4,10 +4,18 @@ import disparser.Argument;
 import disparser.ArgumentReader;
 import disparser.ParsedArgument;
 
-public class ByteArgument implements Argument<Byte> {
+/**
+ * A simple argument for parsing bytes.
+ * 
+ * @author Luke Tonon
+ */
+public final class ByteArgument implements Argument<Byte> {
 
 	private ByteArgument() {}
 	
+	/**
+	 * @return The default instance.
+	 */
 	public static ByteArgument get() {
 		return new ByteArgument();
 	}
@@ -15,7 +23,7 @@ public class ByteArgument implements Argument<Byte> {
 	@Override
 	public ParsedArgument<Byte> parse(ArgumentReader reader) {
 		Byte nextByte = reader.nextByte();
-		return nextByte != null ? ParsedArgument.parse(nextByte) : ParsedArgument.parseWithError(nextByte, "`" + reader.getMessageComponents()[reader.getCurrentComponent()] + "`" + " is not a valid byte");
+		return nextByte != null ? ParsedArgument.parse(nextByte) : ParsedArgument.parseError("`%s` is not a valid byte", reader.getCurrentMessageComponent());
 	}
 
 }

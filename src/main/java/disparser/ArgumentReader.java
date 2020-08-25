@@ -1,9 +1,9 @@
 package disparser;
 
-import javax.annotation.Nullable;
-
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+
+import javax.annotation.Nullable;
 
 /**
  * Used to read {@link Argument}s from a message
@@ -39,6 +39,10 @@ public final class ArgumentReader {
 	
 	public int getCurrentComponent() {
 		return this.currentComponent;
+	}
+	
+	public String getCurrentMessageComponent() {
+		return this.messageComponents[this.currentComponent];
 	}
 	
 	@Nullable
@@ -107,15 +111,21 @@ public final class ArgumentReader {
 	
 	/**
 	 * Used to convert strings to non-primitive type arguments.
-	 * @param reader - {@link Parser} for the object
+	 * @param parser - {@link Parser} for the object
 	 * @return The object({@link A}) read from the reader
 	 */
 	public <A> ParsedArgument<A> parseNextArgument(final Parser<A> parser) {
 		return parser.parse(this.nextArgument());
 	}
 
+	/**
+	 * Tries to parse the next argument in the message.
+	 * If it fails to parse the next argument it will not shift the {@link #currentComponent} forward.
+	 * @param argument - The argument to try to parse.
+	 * @return The parsed argument. If it fails, the parsed argument's result will be null and an error message will be included in the parsed argument.
+	 */
 	public <A> ParsedArgument<A> tryToParseArgument(Argument<A> argument) {
-		ParsedArgument<A> parsedArgument = this.hasNextArg() ? argument.parse(new ArgumentReader(this.channel, new String[] {"", this.messageComponents[this.currentComponent + 1]})) : ParsedArgument.parseWithError(null, "Missing argument");
+		ParsedArgument<A> parsedArgument = this.hasNextArg() ? argument.parse(new ArgumentReader(this.channel, new String[] {"", this.messageComponents[this.currentComponent + 1]})) : ParsedArgument.parseError("Missing argument");
 		if (parsedArgument.getErrorMessage() == null) {
 			this.nextArgument();
 		}
@@ -124,7 +134,7 @@ public final class ArgumentReader {
 	
 	/**
 	 * Gets the next argument in the message's components.
-	 * <p> Only call this once in {@link Argument#parse()} </p>
+	 * <p> Should ideally only be called once in {@link Argument#parse(ArgumentReader)} </p>
 	 * @return The next argument.
 	 */
 	public String nextArgument() {
@@ -136,8 +146,8 @@ public final class ArgumentReader {
 	}
 	
 	/**
-	 * If the reader has a next argument in its components
-	 * @return If the reader has a next argument in its components
+	 * If the reader has a next argument in its components.
+	 * @return If the reader has a next argument in its components.
 	 */
 	public boolean hasNextArg() {
 		return this.currentComponent + 1 <= this.messageComponents.length - 1;
@@ -145,6 +155,6 @@ public final class ArgumentReader {
 	
 	@FunctionalInterface
 	public interface Parser<A> {
-		public ParsedArgument<A> parse(String string);
+		ParsedArgument<A> parse(String string);
 	}
 }

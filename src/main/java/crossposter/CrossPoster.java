@@ -1,12 +1,5 @@
 package crossposter;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import javax.annotation.Nullable;
-import javax.security.auth.login.LoginException;
-
 import crossposter.ServerDataHandler.ServerData;
 import crossposter.commands.CrossPosterCommands;
 import disparser.CommandHandler;
@@ -20,24 +13,24 @@ import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.Webhook;
-import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import javax.annotation.Nullable;
+import javax.security.auth.login.LoginException;
+import java.util.Arrays;
 
 /**
  * @author Luke Tonon
  */
 @SuppressWarnings("unused")
 public final class CrossPoster {
-	private static final String TOKEN = "";
 	private static JDA BOT;
 	
 	public static void main(String[] args) throws LoginException {
 		ServerDataHandler.initialize();
-		JDABuilder botBuilder = JDABuilder.create(TOKEN, GatewayIntent.getIntents(GatewayIntent.DEFAULT));
+		JDABuilder botBuilder = JDABuilder.create(args[0], GatewayIntent.getIntents(GatewayIntent.DEFAULT));
 		botBuilder.setStatus(OnlineStatus.ONLINE);
 		botBuilder.setActivity(Activity.of(ActivityType.DEFAULT, "Cross-posting Channels"));
 		botBuilder.addEventListeners(new EventHandler());
@@ -58,6 +51,7 @@ public final class CrossPoster {
 		};
 		
 		public EventHandler() {
+			this.applyAnnotations(CrossPosterCommands.class);
 			this.registerCommands(
 				Arrays.asList(
 					CrossPosterCommands.PREFIX,
@@ -134,7 +128,7 @@ public final class CrossPoster {
 				}
 				
 				if (!foundPrefix) {
-					builder.append(" " + "[" + prefix + "]");
+					builder.append(String.format(" [%s]", prefix));
 				}
 				
 				nickname = builder.toString();

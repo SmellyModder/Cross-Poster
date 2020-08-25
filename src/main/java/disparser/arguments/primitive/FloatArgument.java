@@ -4,10 +4,18 @@ import disparser.Argument;
 import disparser.ArgumentReader;
 import disparser.ParsedArgument;
 
-public class FloatArgument implements Argument<Float> {
+/**
+ * A simple argument for parsing bytes.
+ * 
+ * @author Luke Tonon
+ */
+public final class FloatArgument implements Argument<Float> {
 
 	private FloatArgument() {}
 	
+	/**
+	 * @return The default instance.
+	 */
 	public static FloatArgument get() {
 		return new FloatArgument();
 	}
@@ -15,7 +23,7 @@ public class FloatArgument implements Argument<Float> {
 	@Override
 	public ParsedArgument<Float> parse(ArgumentReader reader) {
 		Float nextFloat = reader.nextFloat();
-		return nextFloat != null ? ParsedArgument.parse(nextFloat) : ParsedArgument.parseWithError(nextFloat, "`" + reader.getMessageComponents()[reader.getCurrentComponent()] + "`" + " is not a valid float");
+		return nextFloat != null ? ParsedArgument.parse(nextFloat) : ParsedArgument.parseError("`%s` is not a valid float", reader.getCurrentMessageComponent());
 	}
 
 }
