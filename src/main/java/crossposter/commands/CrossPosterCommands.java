@@ -1,14 +1,14 @@
 package crossposter.commands;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import disparser.Command;
 import disparser.annotations.Permissions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CrossPosterCommands {
 	private static final Map<String, String> COMMAND_DESCRIPTIONS = Collections.synchronizedMap(new HashMap<>());

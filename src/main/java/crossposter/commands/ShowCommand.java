@@ -1,25 +1,19 @@
 package crossposter.commands;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import club.minnced.discord.webhook.WebhookClientBuilder;
-import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import crossposter.ServerDataHandler;
 import crossposter.ServerDataHandler.ChannelData;
 import crossposter.ServerDataHandler.ServerData;
 import disparser.Command;
 import disparser.CommandContext;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Message.Attachment;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ShowCommand extends Command {
 
