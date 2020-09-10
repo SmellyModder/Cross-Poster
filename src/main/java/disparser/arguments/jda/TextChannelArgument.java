@@ -57,7 +57,8 @@ public final class TextChannelArgument implements Argument<TextChannel> {
 				Matcher matcher = MENTION_PATTERN.matcher(arg);
 				
 				if (matcher.matches()) {
-					TextChannel channel = this.jda.getTextChannelById(Long.parseLong(matcher.group(1)));
+					long parsedLong = Long.parseLong(matcher.group(1));
+					TextChannel channel = this.jda != null ? this.jda.getTextChannelById(parsedLong) : reader.getChannel().getGuild().getTextChannelById(parsedLong);
 					if (channel != null) {
 						return ParsedArgument.parse(channel);
 					} else {
