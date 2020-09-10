@@ -29,12 +29,12 @@ public final class CrossPoster {
 	private static JDA BOT;
 	
 	public static void main(String[] args) throws LoginException {
-		ServerDataHandler.initialize();
 		JDABuilder botBuilder = JDABuilder.create(args[0], GatewayIntent.getIntents(GatewayIntent.DEFAULT));
 		botBuilder.setStatus(OnlineStatus.ONLINE);
 		botBuilder.setActivity(Activity.of(ActivityType.DEFAULT, "Cross-posting Channels"));
 		botBuilder.addEventListeners(new EventHandler());
 		BOT = botBuilder.build();
+		ServerDataHandler.initialize(args.length > 1 ? args[1] : "/root/cross-poster/data");
 	}
 
 	/**

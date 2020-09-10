@@ -21,19 +21,24 @@ import java.util.concurrent.ExecutionException;
  */
 public final class ServerDataHandler {
 	private static final Gson GSON = new Gson();
-	private static final String DIRECTORY = "/root/cross-poster/data";
+	private static String DIRECTORY;
 	private static final Map<String, ServerData> SERVER_DATA = Collections.synchronizedMap(new HashMap<>());
-	
-	public static void initialize() {
-		File[] files = new File(DIRECTORY).listFiles();
-		for (File file : files) {
-			try {
-				SERVER_DATA.put(file.getName(), GSON.fromJson(new String(Files.readAllBytes(Paths.get(file.getPath()))), ServerData.class));
-			} catch (JsonSyntaxException | IOException e) {
-				e.printStackTrace();
+
+	public static void initialize(String directory) {
+		DIRECTORY = directory;
+		try {
+			File[] files = new File(DIRECTORY).listFiles();
+			for (File file : files) {
+				try {
+					SERVER_DATA.put(file.getName(), GSON.fromJson(new String(Files.readAllBytes(Paths.get(file.getPath()))), ServerData.class));
+				} catch (JsonSyntaxException | IOException e) {
+					e.printStackTrace();
+				}
 			}
+			System.out.println("Cross Poster Info:" + "\n" + "Loaded " + files.length + " Server Data Files");
+		} catch (NullPointerException e) {
+			System.out.println(String.format("Could not locate file with path: %s", directory));
 		}
-		System.out.println("Cross Poster Info:" + "\n" + "Loaded " + files.length + " Server Data Files");
 	}
 	
 	public static ServerData getServerData(String serverId) {
