@@ -1,16 +1,17 @@
 package crossposter.commands;
 
-import disparser.Command;
-import disparser.annotations.Permissions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.smelly.disparser.Command;
+import net.smelly.disparser.annotations.Aliases;
+import net.smelly.disparser.annotations.Permissions;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CrossPosterCommands {
+public final class CrossPosterCommands {
 	private static final Map<String, String> COMMAND_DESCRIPTIONS = Collections.synchronizedMap(new HashMap<>());
 	public static final Map<String, MessageEmbed> COMMAND_INFOS = Collections.synchronizedMap(new HashMap<>());
 
@@ -58,6 +59,7 @@ public class CrossPosterCommands {
 		)
 	);
 
+	@Aliases(value = "showcase", mergeAliases = true)
 	public static final ShowCommand SHOW = createCommand(new ShowCommand(),
 		"show",
 		"crossposts a message if the current channel crossposts to a channel",

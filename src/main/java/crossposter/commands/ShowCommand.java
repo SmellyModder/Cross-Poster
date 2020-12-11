@@ -6,12 +6,12 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import crossposter.ServerDataHandler;
 import crossposter.ServerDataHandler.ChannelData;
 import crossposter.ServerDataHandler.ServerData;
-import disparser.Command;
-import disparser.CommandContext;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import net.smelly.disparser.Command;
+import net.smelly.disparser.CommandContext;
 
 import javax.annotation.Nullable;
 import java.util.List;

@@ -2,8 +2,6 @@ package crossposter;
 
 import crossposter.ServerDataHandler.ServerData;
 import crossposter.commands.CrossPosterCommands;
-import disparser.CommandHandler;
-import disparser.InfoCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -16,10 +14,11 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.smelly.disparser.CommandHandler;
+import net.smelly.disparser.util.InfoCommand;
 
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
-import java.util.Arrays;
 
 /**
  * @author Luke Tonon
@@ -51,16 +50,8 @@ public final class CrossPoster {
 		};
 		
 		public EventHandler() {
-			this.applyAnnotations(CrossPosterCommands.class);
-			this.registerCommands(
-				Arrays.asList(
-					CrossPosterCommands.PREFIX,
-					CrossPosterCommands.DISABLE,
-					CrossPosterCommands.ENABLE,
-					CrossPosterCommands.REQUIRE_ATTACHMENT,
-					CrossPosterCommands.SHOW
-				)
-			);
+			super(guild -> getServerPrefix(guild.getId()));
+			this.registerCommands(CrossPosterCommands.class);
 		}
 		
 		@Override
@@ -70,13 +61,9 @@ public final class CrossPoster {
 		
 		@Override
 		public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+			//TODO: Remove the need to do this in Disparser 2.0.0
 			this.registerCommand("info", new InfoCommand(this.createMainInfoMessage(event.getGuild())).setCommandInfoMessages(CrossPosterCommands.COMMAND_INFOS));
 			super.onGuildMessageReceived(event);
-		}
-		
-		@Override
-		public String getPrefix(Guild guild) {
-			return getServerPrefix(guild.getId());
 		}
 		
 		private MessageEmbed createMainInfoMessage(Guild guild) {
@@ -124,7 +111,7 @@ public final class CrossPoster {
 						splitNickname[i] = "[" + prefix + "]";
 						foundPrefix = true;
 					}
-					builder.append(" " + splitNickname[i]);
+					builder.append(" ").append(splitNickname[i]);
 				}
 				
 				if (!foundPrefix) {
