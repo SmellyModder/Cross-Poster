@@ -115,6 +115,6 @@ public final class ShowCommand extends Command {
 				return messageContent.substring(i) + String.format(" (**Source:** [Jump](<%s>))", message.getJumpUrl());
 			}
 		}
-		return "";
+		return String.format(" (**Source:** [Jump](<%s>))", message.getJumpUrl());
 	}
 }
