@@ -57,7 +57,7 @@ public final class ShowCommand extends Command {
 						String nickname = messageSender != null ? messageSender.getNickname() : null;
 						messageBuilder.setUsername(nickname != null ? nickname : message.getAuthor().getName());
 						messageBuilder.setAvatarUrl(message.getAuthor().getAvatarUrl());
-						messageBuilder.setContent(getMessageTrimmed(message));
+						messageBuilder.setContent(getShowcaseMessage(message));
 						messageBuilder.setAllowedMentions(ALLOWED_MENTIONS);
 
 						List<Attachment> messageAttachments = message.getAttachments();
@@ -108,7 +108,7 @@ public final class ShowCommand extends Command {
 		}
 	}
 
-	public static String getMessageTrimmed(Message message) {
+	public static String getShowcaseMessage(Message message) {
 		String messageContent = message.getContentRaw();
 		for (int i = 0; i < messageContent.length(); i++) {
 			if (Character.isWhitespace(messageContent.charAt(i))) {
