@@ -25,7 +25,7 @@ public final class ServerDataHandler {
 	private static final Map<String, ServerData> SERVER_DATA = Collections.synchronizedMap(new HashMap<>());
 
 	public static void initialize(String directory) {
-		DIRECTORY = "C:\\Users\\diamo\\OneDrive\\Desktop\\Discord Bots\\Cross-Poster\\Cross-Poster\\data";
+		DIRECTORY = directory;
 		try {
 			File[] files = new File(DIRECTORY).listFiles();
 			for (File file : files) {
