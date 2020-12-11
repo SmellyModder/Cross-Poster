@@ -2,14 +2,14 @@ buildscript {
     repositories {
         jcenter()
     }
-
+    
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
     }
 }
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "2.0.0"
+   id "com.github.johnrengelman.shadow" version "2.0.0"
 }
 
 apply plugin: 'java-library'
@@ -19,20 +19,19 @@ mainClassName = 'crossposter/CrossPoster'
 
 repositories {
     jcenter()
-    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'net.dv8tion:JDA:4.2.0_181'
-    implementation 'club.minnced:discord-webhooks:0.3.2'
-    implementation 'com.github.SmellyModder:Disparser:1.3.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+   implementation 'net.dv8tion:JDA:4.2.0_181'
+   implementation 'club.minnced:discord-webhooks:0.3.2'
+   
+   implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 shadowJar {
-    manifest {
-        attributes(
-                'Main-Class': 'crossposter.CrossPoster'
-        )
-    }
+	manifest {
+		attributes(
+			'Main-Class': 'crossposter.CrossPoster'
+		)
+	}
 }
