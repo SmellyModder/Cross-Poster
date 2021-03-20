@@ -16,7 +16,6 @@ import net.smelly.disparser.CommandContext;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ShowCommand extends Command {
 	private static final AllowedMentions ALLOWED_MENTIONS = AllowedMentions.none();
@@ -41,6 +40,11 @@ public final class ShowCommand extends Command {
 				Webhook webhook = this.getWebhookForGuild(channel, serverData);
 				if (webhook != null) {
 					webhook.getManager().setChannel(crosspostChannel).queue(manager -> {
+						List<Attachment> messageAttachments = message.getAttachments();
+						if (channelData.requiresAttachment && messageAttachments.isEmpty()) {
+							return;
+						}
+
 						ServerDataHandler.writeWebhook(guildId, webhook);
 
 						WebhookClientBuilder builder = new WebhookClientBuilder(webhook.getUrl());
@@ -57,32 +61,15 @@ public final class ShowCommand extends Command {
 						String nickname = messageSender != null ? messageSender.getNickname() : null;
 						messageBuilder.setUsername(nickname != null ? nickname : message.getAuthor().getName());
 						messageBuilder.setAvatarUrl(message.getAuthor().getAvatarUrl());
-						messageBuilder.setContent(getShowcaseMessage(message));
 						messageBuilder.setAllowedMentions(ALLOWED_MENTIONS);
 
-						List<Attachment> messageAttachments = message.getAttachments();
-						if (channelData.requiresAttachment && messageAttachments.isEmpty()) {
-							return;
-						}
-
-						AtomicInteger attachmentsRetrieved = new AtomicInteger();
+						StringBuilder showcaseMessage = new StringBuilder(getShowcaseMessage(message));
 						for (Attachment attachment : messageAttachments) {
-							attachment.retrieveInputStream().thenAccept(stream -> {
-								messageBuilder.addFile(attachment.getFileName(), stream);
-								attachmentsRetrieved.getAndIncrement();
-							}).exceptionally(throwable -> {
-								attachmentsRetrieved.getAndIncrement();
-								return null;
-							});
+							showcaseMessage.append("\n").append(attachment.getUrl());
 						}
-
-						int attachmentsSize = messageAttachments.size();
-						while (true) {
-							if (attachmentsRetrieved.get() >= attachmentsSize) {
-								builder.build().send(messageBuilder.build());
-								break;
-							}
-						}
+						showcaseMessage.append("\n").append(String.format("**Source:** [Jump](<%s>)", message.getJumpUrl()));
+						messageBuilder.setContent(showcaseMessage.toString());
+						builder.build().send(messageBuilder.build());
 					});
 				}
 			}
@@ -108,13 +95,13 @@ public final class ShowCommand extends Command {
 		}
 	}
 
-	public static String getShowcaseMessage(Message message) {
+	private static String getShowcaseMessage(Message message) {
 		String messageContent = message.getContentRaw();
 		for (int i = 0; i < messageContent.length(); i++) {
 			if (Character.isWhitespace(messageContent.charAt(i))) {
-				return messageContent.substring(i) + String.format(" (**Source:** [Jump](<%s>))", message.getJumpUrl());
+				return messageContent.substring(i);
 			}
 		}
-		return String.format(" (**Source:** [Jump](<%s>))", message.getJumpUrl());
+		return "";
 	}
 }
