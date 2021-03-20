@@ -60,13 +60,23 @@ public final class CrossPosterCommands {
 	);
 
 	@Aliases(value = "showcase", mergeAliases = true)
-	public static final ShowCommand SHOW = createCommand(new ShowCommand(),
+	public static final ShowCommand SHOW = createCommand(new ShowCommand(false),
 		"show",
 		"crossposts a message if the current channel crossposts to a channel",
 		createInfo(
 			"Show",
 			"This command crossposts a message to the current channel's crosspost channel. This command has no arguments."
 		)
+	);
+
+	@Aliases(value = "showcase_copy", mergeAliases = true)
+	public static final ShowCommand SHOW_COPY = createCommand(new ShowCommand(true),
+			"show_copy",
+			"crossposts a message if the current channel crossposts to a channel, with a copy of the original message's attachments",
+			createInfo(
+					"Show (Copy)",
+					"This command crossposts a message to the current channel's crosspost channel with a copy of the original message's attachments. This command has no arguments."
+			)
 	);
 	
 	private static <C extends Command> C createCommand(C command, String infoName, String description, MessageEmbed info) {

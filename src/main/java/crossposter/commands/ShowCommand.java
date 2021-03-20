@@ -16,12 +16,15 @@ import net.smelly.disparser.CommandContext;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ShowCommand extends Command {
 	private static final AllowedMentions ALLOWED_MENTIONS = AllowedMentions.none();
+	private final boolean copy;
 
-	public ShowCommand() {
-		super("show");
+	public ShowCommand(boolean copy) {
+		super(copy ? "show_copy" : "show");
+		this.copy = copy;
 	}
 
 	@Override
@@ -63,13 +66,33 @@ public final class ShowCommand extends Command {
 						messageBuilder.setAvatarUrl(message.getAuthor().getAvatarUrl());
 						messageBuilder.setAllowedMentions(ALLOWED_MENTIONS);
 
+						AtomicInteger attachmentsRetrieved = new AtomicInteger();
 						StringBuilder showcaseMessage = new StringBuilder(getShowcaseMessage(message));
-						for (Attachment attachment : messageAttachments) {
-							showcaseMessage.append("\n").append(attachment.getUrl());
+						if (this.copy) {
+							for (Attachment attachment : messageAttachments) {
+								attachment.retrieveInputStream().thenAccept(stream -> {
+									messageBuilder.addFile(attachment.getFileName(), stream);
+									attachmentsRetrieved.getAndIncrement();
+								}).exceptionally(throwable -> {
+									attachmentsRetrieved.getAndIncrement();
+									return null;
+								});
+							}
+						} else {
+							attachmentsRetrieved.set(messageAttachments.size());
+							for (Attachment attachment : messageAttachments) {
+								showcaseMessage.append("\n").append(attachment.getUrl());
+							}
 						}
 						showcaseMessage.append("\n").append(String.format("**Source:** [Jump](<%s>)", message.getJumpUrl()));
 						messageBuilder.setContent(showcaseMessage.toString());
-						builder.build().send(messageBuilder.build());
+						int attachmentsSize = messageAttachments.size();
+						while (true) {
+							if (attachmentsRetrieved.get() >= attachmentsSize) {
+								builder.build().send(messageBuilder.build());
+								break;
+							}
+						}
 					});
 				}
 			}
