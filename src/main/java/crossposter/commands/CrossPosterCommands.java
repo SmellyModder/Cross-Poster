@@ -69,13 +69,13 @@ public final class CrossPosterCommands {
 		)
 	);
 
-	@Aliases(value = "showcase_copy", mergeAliases = true)
-	public static final ShowCommand SHOW_COPY = createCommand(new ShowCommand(true),
-			"show_copy",
-			"crossposts a message if the current channel crossposts to a channel, with a copy of the original message's attachments",
+	@Aliases(value = "showcase_link", mergeAliases = true)
+	public static final ShowCommand SHOW_LINK = createCommand(new ShowCommand(true),
+			"show_link",
+			"crossposts a message if the current channel crossposts to a channel, with a link to the original message's attachments.",
 			createInfo(
-					"Show (Copy)",
-					"This command crossposts a message to the current channel's crosspost channel with a copy of the original message's attachments. This command has no arguments."
+					"Show (Link)",
+					"This command crossposts a message to the current channel's crosspost channel with a link to the original message's attachments. This command has no arguments."
 			)
 	);
 	

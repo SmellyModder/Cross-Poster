@@ -16,15 +16,16 @@ import net.smelly.disparser.CommandContext;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ShowCommand extends Command {
 	private static final AllowedMentions ALLOWED_MENTIONS = AllowedMentions.none();
-	private final boolean copy;
+	private final boolean link;
 
-	public ShowCommand(boolean copy) {
-		super(copy ? "show_copy" : "show");
-		this.copy = copy;
+	public ShowCommand(boolean link) {
+		super(link ? "show_link" : "show");
+		this.link = link;
 	}
 
 	@Override
@@ -68,7 +69,13 @@ public final class ShowCommand extends Command {
 
 						AtomicInteger attachmentsRetrieved = new AtomicInteger();
 						StringBuilder showcaseMessage = new StringBuilder(getShowcaseMessage(message));
-						if (this.copy) {
+						boolean link = this.link;
+						if (link) {
+							attachmentsRetrieved.set(messageAttachments.size());
+							for (Attachment attachment : messageAttachments) {
+								showcaseMessage.append("\n").append(attachment.getUrl());
+							}
+						} else {
 							for (Attachment attachment : messageAttachments) {
 								attachment.retrieveInputStream().thenAccept(stream -> {
 									messageBuilder.addFile(attachment.getFileName(), stream);
@@ -78,18 +85,20 @@ public final class ShowCommand extends Command {
 									return null;
 								});
 							}
-						} else {
-							attachmentsRetrieved.set(messageAttachments.size());
-							for (Attachment attachment : messageAttachments) {
-								showcaseMessage.append("\n").append(attachment.getUrl());
-							}
 						}
 						showcaseMessage.append("\n").append(String.format("**Source:** [Jump](<%s>)", message.getJumpUrl()));
 						messageBuilder.setContent(showcaseMessage.toString());
 						int attachmentsSize = messageAttachments.size();
 						while (true) {
 							if (attachmentsRetrieved.get() >= attachmentsSize) {
-								builder.build().send(messageBuilder.build());
+								if (link) {
+									//Add delay to ensure embed doesn't fail (in theory)
+									event.getJDA().getRateLimitPool().schedule(() -> {
+										builder.build().send(messageBuilder.build());
+									}, 500, TimeUnit.MILLISECONDS);
+								} else {
+									builder.build().send(messageBuilder.build());
+								}
 								break;
 							}
 						}
